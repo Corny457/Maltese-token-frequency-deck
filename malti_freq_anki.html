@@ -1,0 +1,37 @@
+<!-- Front Temlplate  --> 
+{{word}} <div style='font-family: "Arial"; font-size: 15px;'>{{POS}}</div>
+<br>
+<div style='font-family: "Arial"; font-size: 20px;'>{{sentence}}</div>
+
+
+<!-- Back Temlplate  --> 
+{{FrontSide}}
+
+<hr id=answer>
+
+
+<div style='font-family: "Arial"; font-size: 20px;'>{{english}}</div><br>
+
+{{sentence translation}}<br>
+
+{{usage}}<br><br>
+{{IPA}} {{etymology}} {{word forms}}<br>
+{{root}}
+
+<br>
+<br>
+<div style='font-family: "Arial"; font-size: 15px;'>
+<a href="{{link}}">{{link}}</a>
+</div>
+
+
+
+<!-- Styling  --> 
+ .card {
+    font-family: arial;
+    font-size: 20px;
+    line-height: 1.5;
+    text-align: center;
+    color: black;
+    background-color: white;
+}
