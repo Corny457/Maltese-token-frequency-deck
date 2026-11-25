@@ -29,63 +29,14 @@ data_filtered <- raw_data %>%
 
 words <- data_filtered$word
 
-# This dictionary is available at https://github.com/ragelmalti/Maltese-to-English-Dictionary/blob/master/malti-english.dsl.dz
-lines <- readLines("malti-english.dsl")
-
-words <- c()
-defs <- c()
-
-current_word <- NULL
-current_def <- c()
-
-for (line in lines) {
-  
-  line <- trimws(line, "right")
-  
-  if (line == "") next
-  
-  # NEW ENTRY (not indented)
-  if (!grepl("^\\s", line)) {
-    
-    if (!is.null(current_word)) {
-      words <- c(words, current_word)
-      defs <- c(defs, paste(current_def, collapse = " "))
-    }
-    
-    current_word <- line
-    current_def <- c()
-    
-  } else {
-    current_def <- c(current_def, trimws(line))
-  }
-}
-
-# last entry
-if (!is.null(current_word)) {
-  words <- c(words, current_word)
-  defs <- c(defs, paste(current_def, collapse = " "))
-}
-
-dict_raw <- data.frame(
-  word = words,
-  definition = defs,
-  stringsAsFactors = FALSE
-)
-
-dict <- dict_raw[-c(1:3), ] 
-
-dict$definition <- gsub("\\[.*?\\]", "", dict$definition)
-dict$definition <- gsub("\\s+", " ", dict$definition)
-dict$definition <- trimws(dict$definition)
-
-head(dict)
 
 first_dict <- data_filtered %>%
-  left_join(dict, by = "word", relationship = "many-to-many") %>%
+  #left_join(dict, by = "word", relationship = "many-to-many") %>%
   mutate(
     link = paste0("https://en.wiktionary.org/wiki/", word, "#Maltese")
   )
 
+# This dictionary is available at https://www.clarin.eu/resource-families/basic-english-maltese-dictionary
 xml <- read_xml("BasicDictionary.xml")
 
 entries <- xml_find_all(xml, ".//entry")
@@ -112,10 +63,6 @@ dict_collapsed <- dict_xml %>%
   )
 
 df_final <- first_dict %>%
-  left_join(dict_collapsed, by = "word") %>%
-  mutate(
-    definition = coalesce(definition.x, definition.y)
-  ) %>%
-  select(-definition.x, -definition.y)
+  left_join(dict_collapsed, by = "word")
 
 write.csv(df_final, "malt_freq.csv", row.names = FALSE)
